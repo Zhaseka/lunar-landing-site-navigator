@@ -1,0 +1,11 @@
+node_modules
+dist
+.DS_Store
+data/raw/
+pipeline/.venv/
+__pycache__/
+.vercel
+.env*
+.claude/
+data/*.log
+*.part

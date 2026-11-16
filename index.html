@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lunar Landing Site Navigator</title>
+  <meta name="ai-assistance" content="Code, data-pipeline scripts and text written with help from Claude (Anthropic). Science data from NASA/JPL. No AI-generated images." />
+  <meta name="description" content="Compare lunar landing sites and dates by sunlight for power and line of sight to Earth for communication. A NASA Space Apps Challenge 2026 project." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%231B1F27'/%3E%3Cpath d='M2 19h28' stroke='%23D3D4CF' stroke-width='2'/%3E%3Ccircle cx='21' cy='17' r='3' fill='%23F0B43C'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300..700&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="/textures/moon_4k.jpg" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <a class="skip" href="#navigator">Skip to the navigator</a>
+
+  <header class="topbar" id="top">
+    <a class="brand" href="#top" aria-label="Lunar Landing Site Navigator, back to top">
+      <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M2 19h28" stroke="currentColor" stroke-width="1.5"/><circle cx="21" cy="17" r="3" fill="var(--sun)"/></svg>
+      <span>Site Navigator</span>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#story">Why the pole</a>
+      <a href="#navigator">Navigator</a>
+      <a href="#map">Light map</a>
+      <a href="#method">Data &amp; method</a>
+      <a href="#refs">References</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -------------------------------------------------------------->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-card" data-hero-card>
+        <canvas class="hero-canvas" aria-hidden="true"></canvas>
+        <p class="hero-word" aria-hidden="true">Navigator</p>
+        <h1 id="hero-title" class="sr-only">Lunar Landing Site Navigator</h1>
+        <ul class="hero-features" aria-label="What it shows">
+          <li>Sun and Earth above the horizon</li>
+          <li>Power windows</li>
+          <li>Direct-to-Earth comms</li>
+          <li>Any site, any date</li>
+          <li>Side-by-side comparison</li>
+        </ul>
+        <div class="hero-copy">
+          <p class="hero-lede">At the lunar south pole the Sun never climbs higher than your thumb at arm’s length. <span>Pick a landing site and a date to see when a lander has sunlight for power and a line of sight to Earth, and how both change if the launch slips.</span></p>
+          <div class="hero-actions">
+            <a class="link-arrow" href="#navigator">Open the navigator <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+            <a class="link-arrow" href="#story">Why the pole is hard <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></a>
+          </div>
+        </div>
+        <aside class="hero-live" aria-label="Live conditions">
+          <p class="mono">Live · Shackleton–de Gerlache ridge</p>
+          <p data-hero-live>Computing the Sun’s position…</p>
+          <p class="mono hero-credit">Surface: NASA LRO / LROC, CGI Moon Kit</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- STATEMENT (scroll-filled text over a wireframe globe of sites) ---->
+    <section class="statement" aria-labelledby="statement-text">
+      <div class="statement-sticky">
+        <p id="statement-text" class="statement-text" data-reveal>Every lunar landing is a bet on two lines of sight. One to the Sun, for power. One to Earth, for the radio. At the south pole both skim the horizon, and a few days or a few hundred metres can break either.</p>
+        <canvas class="wire" data-wire role="img" aria-label="Wireframe Moon seen from below the south pole, with the curated landing sites labelled"></canvas>
+      </div>
+    </section>
+
+    <!-- STORY ------------------------------------------------------------->
+    <section class="story space" id="story" aria-labelledby="story-title">
+      <div class="wrap">
+        <h2 id="story-title" class="section-title">Why landing near the pole is a timing problem</h2>
+        <div class="story-grid">
+          <ol class="story-steps">
+            <li class="step" data-step="0">
+              <h3>The Moon barely tilts</h3>
+              <p>Earth’s axis leans 23.4°, which gives us seasons. The Moon’s leans only 1.54° to the plane of its orbit around the Sun. Stand at the south pole and the Sun never rises or sets in the usual way. It circles the horizon once every 29.5 days, never more than about 1.6° up.</p>
+              <div class="frame"><span class="fl fl-t mono" aria-hidden="true">Axial tilt</span><span class="fl fl-l mono" aria-hidden="true">Earth</span><span class="fl fl-r mono" aria-hidden="true">Moon</span><figure class="step-figure-inline" data-figure="0"></figure><span class="fl fl-b mono" aria-hidden="true">Fig. 01</span></div>
+            </li>
+            <li class="step" data-step="1">
+              <h3>A few hundred metres of height decide everything</h3>
+              <p>With the Sun that low, a crater rim casts a shadow kilometres long. The floors of some polar craters have not seen sunlight in billions of years, and that is where water ice survives. A ridge a few hundred metres higher can stay in sunlight for most of the year. A lander needs that sunlight for power and warmth.</p>
+              <div class="frame"><span class="fl fl-t mono" aria-hidden="true">Grazing light</span><span class="fl fl-l mono" aria-hidden="true">Crater rim</span><span class="fl fl-r mono" aria-hidden="true">Crater floor</span><figure class="step-figure-inline" data-figure="1"></figure><span class="fl fl-b mono" aria-hidden="true">Fig. 02</span></div>
+            </li>
+            <li class="step" data-step="2">
+              <h3>Earth hangs still, then wobbles</h3>
+              <p>The Moon keeps one face toward us, so Earth barely moves in the lunar sky. Libration rocks it about 7° up and down and side to side each month. On the equator that hardly matters. At the pole, where Earth sits on the horizon, the wobble decides whether a lander can talk to Earth directly or must wait for a relay.</p>
+              <div class="frame"><span class="fl fl-t mono" aria-hidden="true">Libration</span><span class="fl fl-l mono" aria-hidden="true">Above horizon</span><span class="fl fl-r mono" aria-hidden="true">Below horizon</span><figure class="step-figure-inline" data-figure="2"></figure><span class="fl fl-b mono" aria-hidden="true">Fig. 03</span></div>
+            </li>
+            <li class="step" data-step="3">
+              <h3>So a two-week slip can change the mission</h3>
+              <p>Hardware runs late and launch dates move. Each bar below is a 14-day surface mission at the Shackleton–de Gerlache ridge, starting on a different day of 2027, and its height is how much of that mission is in sunlight. Move the start by a fortnight and a well-lit mission can become a dark one.</p>
+              <div class="frame"><span class="fl fl-t mono" aria-hidden="true">Launch slip, 2027</span><span class="fl fl-l mono" aria-hidden="true">Computed live</span><span class="fl fl-r mono" aria-hidden="true">Shackleton ridge</span><figure class="step-figure-inline" data-figure="3"></figure><span class="fl fl-b mono" aria-hidden="true">Fig. 04</span></div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- TERRAIN SLIDER (drag comparison) -------------------------------->
+    <section class="slider-sec" aria-labelledby="slider-title">
+      <div class="wrap">
+        <p class="pill">Terrain matters</p>
+        <h2 id="slider-title" class="center-title">Same site, same month. <span>Only the horizon changes.</span></h2>
+        <div class="compare-slider" data-slider>
+          <canvas data-slider-a role="img" aria-label="Sky plot assuming a smooth Moon"></canvas>
+          <div class="cs-clip" data-slider-clip><canvas data-slider-b role="img" aria-label="Sky plot with LOLA terrain horizon"></canvas></div>
+          <div class="cs-handle" data-slider-handle aria-hidden="true"><span></span></div>
+          <span class="cs-tag cs-tag-l mono" aria-hidden="true">LOLA terrain</span>
+          <span class="cs-tag cs-tag-r mono" aria-hidden="true">Smooth sphere</span>
+          <input class="cs-range" type="range" min="0" max="100" value="50" data-slider-range aria-label="Reveal: drag left for smooth sphere, right for LOLA terrain" />
+        </div>
+        <p class="slider-cap" data-slider-cap>Drag to compare.</p>
+      </div>
+    </section>
+
+    <!-- NAVIGATOR --------------------------------------------------------->
+    <section class="navigator shadow" id="navigator" aria-labelledby="nav-title" tabindex="-1">
+      <div class="wrap wrap-wide">
+        <div class="nav-head">
+          <h2 id="nav-title" class="section-title">Navigator</h2>
+          <p class="nav-intro">Choose a site and a start date. The sky plot shows where the Sun and Earth sit against the local horizon; the timeline below shows when each is visible. Drag the timeline or press play to watch a lunar day pass.</p>
+        </div>
+
+        <div class="nav-grid">
+          <aside class="nav-controls" aria-label="Scenario">
+            <div class="globe-box">
+              <canvas class="globe" aria-label="Globe of the Moon showing the selected site and the current day and night boundary" role="img"></canvas>
+              <p class="globe-hint">Drag to turn the Moon</p>
+            </div>
+
+            <fieldset class="field">
+              <legend>Landing site</legend>
+              <div class="site-list" data-site-list role="radiogroup" aria-label="Landing site"></div>
+            </fieldset>
+
+            <details class="field custom">
+              <summary>Use your own coordinates</summary>
+              <form class="custom-form" data-custom-form novalidate>
+                <label>Latitude (°, south is negative)
+                  <input name="lat" type="number" inputmode="decimal" step="0.001" min="-90" max="90" required aria-describedby="custom-err" />
+                </label>
+                <label>Longitude (°, west is negative)
+                  <input name="lon" type="number" inputmode="decimal" step="0.001" min="-180" max="180" required aria-describedby="custom-err" />
+                </label>
+                <p class="err" id="custom-err" role="alert"></p>
+                <button class="btn btn-small" type="submit">Show this point</button>
+              </form>
+            </details>
+
+            <div class="field">
+              <label for="start-date">Start date and time (UTC)</label>
+              <input id="start-date" type="datetime-local" data-start />
+              <div class="shift">
+                <button class="btn btn-small btn-quiet" type="button" data-shift="-14">14 days earlier</button>
+                <button class="btn btn-small btn-quiet" type="button" data-shift="14">14 days later</button>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="window">Time span</label>
+              <select id="window" data-window>
+                <option value="lunar">One lunar day (29.5 days)</option>
+                <option value="mission">14-day mission</option>
+                <option value="year">One year</option>
+              </select>
+            </div>
+
+            <fieldset class="field">
+              <legend>Horizon</legend>
+              <div class="seg" role="radiogroup" aria-label="Horizon model">
+                <label><input type="radio" name="horizon" value="terrain" checked /> <span>LOLA terrain</span></label>
+                <label><input type="radio" name="horizon" value="flat" /> <span>Smooth sphere</span></label>
+              </div>
+            </fieldset>
+          </aside>
+
+          <div class="nav-main">
+            <div class="site-head">
+              <div>
+                <h3 class="site-name" data-site-name></h3>
+                <p class="site-meta" data-site-meta></p>
+              </div>
+              <button class="btn btn-small btn-outline" type="button" data-compare-add>Add to comparison</button>
+            </div>
+            <p class="site-note" data-site-note></p>
+
+            <div class="readouts" data-readouts aria-live="polite" aria-atomic="false"></div>
+
+            <figure class="skyplot-fig">
+              <canvas class="skyplot" data-skyplot role="img" aria-label="Sky plot"></canvas>
+              <figcaption>Horizontal axis: compass direction from the site. Vertical axis: angle above level, stretched near the horizon so low angles are readable. Dots trace each body’s path over the chosen span; faded dots are hidden behind terrain.</figcaption>
+            </figure>
+
+            <div class="timeline-box">
+              <div class="timeline-bar">
+                <button class="btn btn-small btn-play" type="button" data-play aria-pressed="false">Play</button>
+                <output class="cursor-time" data-cursor-time></output>
+              </div>
+              <div class="timeline-wrap">
+                <canvas class="timeline" data-timeline aria-hidden="true"></canvas>
+                <input class="scrub" type="range" min="0" max="100" value="0" step="1" data-scrub aria-label="Time within span" />
+              </div>
+              <div class="legend" aria-hidden="true">
+                <span><i class="sw sw-sun"></i>Sun visible</span>
+                <span><i class="sw sw-earth"></i>Earth visible</span>
+                <span><i class="sw sw-both"></i>Both: power and direct link</span>
+              </div>
+            </div>
+
+            <div class="metrics" data-metrics></div>
+          </div>
+        </div>
+
+        <div class="compare" aria-labelledby="compare-title">
+          <h3 id="compare-title">Compare sites over the same span</h3>
+          <p class="compare-empty" data-compare-empty>Add up to four sites with “Add to comparison” to see them side by side.</p>
+          <div class="compare-table-wrap"><table class="compare-table" data-compare-table hidden>
+            <caption class="sr-only">Comparison of landing sites over the selected span</caption>
+            <thead><tr>
+              <th scope="col">Site</th>
+              <th scope="col">Visibility over span</th>
+              <th scope="col" class="num">Sunlit</th>
+              <th scope="col" class="num">Earth in view</th>
+              <th scope="col" class="num">Both</th>
+              <th scope="col" class="num">Longest dark</th>
+              <th scope="col" class="num">Highest Sun</th>
+              <th scope="col"><span class="sr-only">Remove</span></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table></div>
+          <div class="legend compare-legend" data-compare-legend>
+            <span><i class="sw sw-sun"></i>Sun only</span>
+            <span><i class="sw sw-earth"></i>Earth only</span>
+            <span><i class="sw sw-both"></i>Both</span>
+            <span><i class="sw sw-none"></i>Neither</span>
+            <span>Green figures are the best in each column.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ILLUMINATION MAP ---------------------------------------------------->
+    <section class="illum space" id="map" aria-labelledby="map-title">
+      <div class="wrap wrap-wide">
+        <div class="illum-head">
+          <div>
+            <p class="pill">South pole, all of 2027</p>
+            <h2 id="map-title" class="section-title">Where the light is</h2>
+          </div>
+          <p class="illum-intro">Every point on this 60 × 60 km map got its own LOLA horizon, then we checked the Sun and Earth against it every 4 hours for a full year. Crater floors that never see the Sun show up black. The bright ridges beside them are where landers want to be.</p>
+        </div>
+
+        <div class="illum-grid">
+          <div class="illum-stage">
+            <div class="frame illum-frame">
+              <span class="fl fl-t mono" aria-hidden="true">Toward 0° (Earth side)</span>
+              <span class="fl fl-b mono" aria-hidden="true">Toward 180° (far side)</span>
+              <span class="fl fl-l mono" aria-hidden="true">270°</span>
+              <span class="fl fl-r mono" aria-hidden="true">90°</span>
+              <canvas class="illum-canvas" data-illum tabindex="0" role="img" aria-label="Illumination map of the lunar south pole"></canvas>
+            </div>
+          </div>
+
+          <aside class="illum-side">
+            <fieldset class="field">
+              <legend>Show</legend>
+              <div class="seg seg-3" role="radiogroup" aria-label="Map layer">
+                <label><input type="radio" name="illum-layer" value="sun" checked /> <span>Sunlight</span></label>
+                <label><input type="radio" name="illum-layer" value="earth" /> <span>Earth in view</span></label>
+                <label><input type="radio" name="illum-layer" value="both" /> <span>Both</span></label>
+              </div>
+            </fieldset>
+
+            <div class="illum-ramp" aria-hidden="true">
+              <canvas data-illum-ramp></canvas>
+              <div class="ramp-ticks mono"><span>0%</span><span>50%</span><span>100% of the year</span></div>
+            </div>
+
+            <div class="illum-readout" data-illum-readout aria-live="polite">
+              <p class="mono">Point</p>
+              <p class="ro-main">Move over the map</p>
+              <p class="ro-sub">or focus it and use the arrow keys.</p>
+            </div>
+
+            <div class="illum-sites">
+              <p class="mono">Landing sites on this map</p>
+              <ul data-illum-sites></ul>
+            </div>
+
+            <p class="illum-note">Hours of sunlight and Earth visibility seen from a 2 m mast, 2027. Horizons: 180 bearings to 100 km over LOLA 80 m heights. Pixels are 300 m, so a narrow ridge top can be brighter than its pixel.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- METHOD ------------------------------------------------------------>
+    <section class="method paper" id="method" aria-labelledby="method-title">
+      <div class="wrap">
+        <h2 id="method-title" class="section-title">Data &amp; method</h2>
+        <p class="method-lede">Every number in the navigator comes from NASA and JPL data: JPL’s DE421 planetary ephemeris for where the Sun and Earth are, and the Lunar Orbiter Laser Altimeter (LOLA) for the shape of the ground. The heavy work is done once by a Python pipeline; your browser then computes each scenario from those files. Nothing is mocked.</p>
+
+        <div class="method-grid">
+          <article>
+            <h3>Where the Sun and Earth are</h3>
+            <p>Positions come from JPL’s DE421 ephemeris through the Skyfield library: the apparent Sun and Earth as seen from the Moon, with light travel time and aberration, rotated into the Moon’s own body-fixed frame using NAIF’s lunar orientation data. That frame includes the Moon’s real wobble (libration) and is the same frame LOLA maps use, so the sky and the terrain line up.</p>
+            <p>The pipeline stores one record per hour for 2026–2030 (1 MB). For a site, the browser turns those vectors into elevation and compass bearing, correcting Earth’s direction for the site’s offset from the Moon’s centre. The result matches JPL Horizons to a few arcseconds (table below). Outside 2026–2030 the site falls back to Meeus’ almanac formulas, accurate to about 0.04°.</p>
+          </article>
+          <article>
+            <h3>Where the horizon is</h3>
+            <p>The Moon has no atmosphere to bend light, so a body is visible only when it is geometrically above the skyline. On a smooth sphere, a 2-metre lander mast sees the horizon 0.087° below level. A site on a ridge 600 m above its surroundings sees it about 1.5° below level, which is enough to keep the low polar Sun in view.</p>
+            <p>Each site’s real skyline is computed from LOLA elevation maps: 720 rays, one every half degree of compass bearing, each sampled out to 200 km. Along every ray the terrain height becomes an angle seen from a 2-metre mast, with the Moon’s curvature included; the highest angle is the horizon. Near the pole the maps resolve 80 m, to 60°S 240 m, elsewhere about 1.9 km.</p>
+            <p>Artemis III regions are areas, not points, so for those the pipeline picks the highest LOLA point within a few kilometres of the region’s centre, where a lander would most likely go. The navigator shows that point.</p>
+          </article>
+          <article>
+            <h3>What the metrics mean</h3>
+            <dl class="defs">
+              <dt>Sunlit</dt><dd>Share of the span when more than half of the Sun’s disc is above the skyline.</dd>
+              <dt>Earth in view</dt><dd>Share of the span when more than half of Earth’s disc is above the skyline, so a direct radio link is possible.</dd>
+              <dt>Both</dt><dd>Power and a direct link at the same time: the hours a lander can work and report.</dd>
+              <dt>Longest dark</dt><dd>The longest unbroken period without sunlight inside the span. Batteries and heaters must survive it.</dd>
+              <dt>Highest Sun</dt><dd>Peak solar elevation while visible. Low angles favour vertical solar arrays.</dd>
+            </dl>
+          </article>
+        </div>
+
+        <div class="validation">
+          <h3>Checked against JPL Horizons</h3>
+          <p>We asked NASA JPL’s Horizons System where the Sun and Earth appear from four lunar sites on four dates between 2026 and 2028, then recomputed the same positions here. This runs live in your browser each time the page loads. One arcsecond is 1/3600 of a degree.</p>
+          <div class="table-wrap"><table class="val-table" data-validation-jpl>
+            <thead><tr><th scope="col">Quantity</th><th scope="col" class="num">Dates</th><th scope="col" class="num">Largest difference</th><th scope="col">Result</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+          <h3 class="val-sub">Fallback model checks</h3>
+          <p>For dates outside 2026–2030 the site uses Meeus’ formulas, checked here against his published worked examples.</p>
+          <div class="table-wrap"><table class="val-table" data-validation>
+            <thead><tr><th scope="col">Quantity</th><th scope="col" class="num">This site</th><th scope="col" class="num">Reference</th><th scope="col" class="num">Difference</th><th scope="col">Result</th></tr></thead>
+            <tbody></tbody>
+          </table></div>
+        </div>
+
+        <div class="limits">
+          <h3>Known limits</h3>
+          <ul>
+            <li>Horizons are precomputed for the curated sites. Custom coordinates use a smooth-sphere horizon, and the navigator says so.</li>
+            <li>Away from the poles the global LOLA map is about 1.9 km per pixel, so boulders and small craters right next to a lander are not resolved.</li>
+            <li>Artemis III and VIPER regions use an automatically picked high point, not an official landing point.</li>
+            <li>Sunlight is treated as on or off at half the disc; real power also depends on panel orientation, dust and temperature.</li>
+          </ul>
+        </div>
+
+        <div class="sources">
+          <h3>NASA and partner data this builds on</h3>
+          <ul class="source-list">
+            <li><a href="https://ssd.jpl.nasa.gov/horizons/" rel="noopener">JPL Horizons System</a>: precise ephemerides for cross-checking Sun and Earth positions from any lunar site.</li>
+            <li><a href="https://pds-geosciences.wustl.edu/missions/lro/lola.htm" rel="noopener">LOLA gridded elevation models (PDS Geosciences Node)</a>: LDEM 80 m and 240 m south-polar maps and the 16 px/deg global map, used for every terrain horizon.</li>
+            <li><a href="https://naif.jpl.nasa.gov/naif/" rel="noopener">JPL DE421 and NAIF lunar orientation kernels</a>: where the Sun and Earth are, in the Moon’s own frame.</li>
+            <li><a href="https://svs.gsfc.nasa.gov/4720" rel="noopener">NASA SVS CGI Moon Kit</a>: LROC colour mosaic and LOLA elevation textures for the 3D Moon.</li>
+          </ul>
+          <p class="further">Further reading, not used for the numbers here: <a href="https://quickmap.lroc.asu.edu/" rel="noopener">LROC Quickmap</a>, <a href="https://trek.nasa.gov/moon/" rel="noopener">NASA Moon Trek</a>, <a href="https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/" rel="noopener">Canadian Space Agency, Moon Exploration</a>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- REFERENCES ---------------------------------------------------------->
+    <section class="team shadow" id="refs" aria-labelledby="refs-title">
+      <div class="wrap">
+        <h2 id="refs-title" class="section-title">References</h2>
+        <p class="team-lede">Built for the 2026 NASA Space Apps Challenge, <a href="https://www.spaceappschallenge.org/2026/challenges/lunar-landing-site-navigator/" rel="noopener">Lunar Landing Site Navigator</a>.</p>
+
+        <div class="refs">
+          <h3 class="sr-only">References and credits</h3>
+          <ol>
+            <li>Meeus, J. (1998). <cite>Astronomical Algorithms</cite>, 2nd ed. Willmann-Bell. Chapters 22, 25, 47 and 53.</li>
+            <li>NASA Space Apps Challenge 2026. Lunar Landing Site Navigator challenge statement and resources.</li>
+            <li>JPL Solar System Dynamics, Horizons System and API: reference positions for validation. ssd.jpl.nasa.gov/horizons</li>
+            <li>LRO Lunar Orbiter Laser Altimeter (LOLA) gridded elevation models LDEM 80 m, 240 m and 16 px/deg, PDS Geosciences Node. pds-geosciences.wustl.edu/missions/lro/lola.htm</li>
+            <li>JPL DE421 planetary ephemeris and NAIF lunar orientation kernels (moon_pa_de421_1900-2050.bpc, moon_080317.tf, pck00008.tpc). naif.jpl.nasa.gov</li>
+            <li>Skyfield (MIT), NumPy and SciPy (BSD): the data pipeline.</li>
+            <li>Landing-site coordinates: NASA, ISRO, JAXA, CNSA and Intuitive Machines mission releases; Artemis III candidate regions from NASA (approximate points).</li>
+            <li>Moon surface: NASA Scientific Visualization Studio, CGI Moon Kit (LRO LROC colour mosaic and LOLA elevation), public domain. svs.gsfc.nasa.gov/4720</li>
+            <li><strong>AI assistance:</strong> the code, data-pipeline scripts and site text were written with help from Claude (Anthropic), an AI assistant. All science data is from NASA and JPL; no AI-generated images are used.</li>
+            <li>three.js (MIT License), Vite (MIT License), Inter Tight, Newsreader and JetBrains Mono typefaces (SIL Open Font License).</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <p>An independent team project for the NASA Space Apps Challenge. Not an official NASA product, and not endorsed by NASA. Built with AI assistance (Claude by Anthropic) for code and text; science data from NASA and JPL.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

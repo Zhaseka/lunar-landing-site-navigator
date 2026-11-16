@@ -1,0 +1,18 @@
+{
+ "n": 200,
+ "halfKm": 30.0,
+ "year": 2027,
+ "stepHours": 4,
+ "azimuths": 180,
+ "rangeKm": 100.0,
+ "layers": [
+  "hillshade",
+  "sunPct",
+  "earthPct",
+  "bothPct"
+ ],
+ "projection": "south polar stereographic, x grows toward 90E, y toward 0E, rows top-down from +y",
+ "heightMin": -3461.5,
+ "heightMax": 1956.0,
+ "source": "LOLA LDEM 80 m (PDS) horizons; JPL DE421 Sun/Earth via Skyfield"
+}

@@ -1,0 +1,15 @@
+{
+  "start": "2026-01-01T00:00:00Z",
+  "stepHours": 1,
+  "count": 43831,
+  "fields": [
+    "sunX",
+    "sunY",
+    "sunZ",
+    "earthXkm",
+    "earthYkm",
+    "earthZkm"
+  ],
+  "frame": "MOON_ME_DE421",
+  "source": "JPL DE421 via Skyfield; NAIF moon_pa_de421_1900-2050.bpc, moon_080317.tf"
+}
